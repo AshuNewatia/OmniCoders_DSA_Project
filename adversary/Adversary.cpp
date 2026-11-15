@@ -1,3 +1,35 @@
+#include <algorithm>
+#include <cstdint>
+#include <cstdlib>
+#include <fstream>
+#include <iostream>
+#include <numeric>
+#include <random>
+#include <stdexcept>
+#include <string>
+#include <vector>
+
+/*
+ * Project 10 - D5 Adversary
+ *
+ * Standalone patient-input generator. It deliberately does NOT implement
+ * Structure A or B and does not claim that any one pattern is worst-case
+ * for those implementations. Use the generated CSV as build_heap input,
+ * then run n extract_min operations while counting key comparisons.
+ *
+ * CSV columns: id,severity,arrival_time
+ *
+ * Build:
+ *   g++ -std=c++17 -O2 -Wall -Wextra -pedantic Adversary.cpp -o adversary
+ *
+ * Run:
+ *   ./adversary 1000 descending 12345 > patients.csv
+ *
+ * Patterns:
+ *   ascending, descending, alternating, sawtooth, bit-reversal,
+ *   random, equal-reverse-arrival
+ */
+
 struct Patient {
     int id;
     int severity;
@@ -126,3 +158,5 @@ int main(int argc, char** argv) {
         std::cerr << "Error: " << ex.what() << '\n';
         return 1;
     }
+    return 0;
+}
