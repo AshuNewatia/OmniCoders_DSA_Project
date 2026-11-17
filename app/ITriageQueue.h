@@ -13,6 +13,7 @@ class ITriageQueue {
 public:
     virtual ~ITriageQueue() = default;
 
+
     virtual void build_heap(const std::vector<Patient>& patients) = 0;
     virtual void insert(const Patient& p) = 0;
     virtual Patient extract_min() = 0;
