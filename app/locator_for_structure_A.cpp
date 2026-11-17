@@ -15,7 +15,7 @@
     twin e("NA", -1);
 
 
-    // RULES:  "NA" for a deleted
+    // RULES:  "NA" for a Not present, "DELETED" for deleted
     // e: Identity Element
     // ID can never be NA or DELETED
 
