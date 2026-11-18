@@ -1,9 +1,63 @@
 # Common Interface and Structural Invariants
 
-This document defines the common interface and structural invariants for the Emergency Triage Queue simulator. It must be strictly followed by Structure A, Structure B, and the Oracle.
+## 1. Purpose
 
-## 1. The Common Interface
-Structure A, Structure B, and the Oracle must all implement this common C++ interface to ensure they can be used interchangeably by the triage simulator application and the differential test harness.
+This document defines the common interface and rules for the Emergency
+Triage Queue project.
+
+The following implementations must follow this interface:
+
+- Structure A: indexed binary min-heap.
+- Structure B: binary heap with lazy invalidation.
+- Oracle: unsorted array.
+
+The application and differential tests can therefore use the same
+operations with each implementation.
+
+## 2. Patient Representation
+
+The shared patient type is defined in `app/ITriageQueue.h`:
+
+```cpp
+struct Patient {
+    int id;
+    int severity;
+    int arrival_time;
+    long long priority_key;
+};
+```
+
+| Field | Meaning |
+|---|---|
+| `id` | Integer identifying the patient. |
+| `severity` | Medical severity score at the time the patient is inserted or built into the queue. |
+| `arrival_time` | Time at which the patient arrived, in simulated minutes. |
+| `priority_key` | Key used to determine the patient's position in the queue. |
+
+A larger medical severity means the patient is more urgent.
+
+A smaller `priority_key` means the patient has higher queue priority.
+
+### Current severity after a revision
+
+The `decrease_key` operation updates only `priority_key`. It does not
+update the `severity` field stored inside the queue.
+
+The simulator's `waiting_room` is the authoritative source for a
+patient's current medical severity. After extraction, the application
+uses the returned patient ID to look up the current severity there.
+
+## 3. Priority Ordering
+
+Patients are ordered using the following rules:
+
+1. Smaller `priority_key` comes first.
+2. If keys are equal, earlier `arrival_time` comes first.
+3. If both are equal, smaller `id` comes first.
+
+All implementations must use the same ordering for every operation.
+
+## 4. Common C++ Interface
 
 ```cpp
 #ifndef TRIAGE_QUEUE_INTERFACE_H
@@ -11,32 +65,178 @@ Structure A, Structure B, and the Oracle must all implement this common C++ inte
 
 #include <vector>
 
-// Represents a patient in the triage casualty ward
 struct Patient {
-    int id;             // Unique patient identifier
-    int severity;       // Base severity score
-    int arrival_time;   // Arrival timestamp for aging policies
+    int id;
+    int severity;
+    int arrival_time;
+    long long priority_key;
 };
 
-// The common priority queue interface
 class ITriageQueue {
 public:
     virtual ~ITriageQueue() = default;
 
-    // Constructs the initial heap from a given set of patients in O(n) time
     virtual void build_heap(const std::vector<Patient>& patients) = 0;
 
-    // Inserts a new patient into the queue
-    virtual void insert(const Patient& p) = 0;
+    virtual void insert(const Patient& patient) = 0;
 
-    // Removes and returns the patient with the highest priority (minimum key)
     virtual Patient extract_min() = 0;
 
-    // Raises a waiting patient's severity by lowering their priority key
-    virtual void decrease_key(int id, int new_severity) = 0;
+    virtual void decrease_key(int id, long long new_key) = 0;
 
-    // Removes a specific patient who leaves before receiving treatment
-    virtual void delete_patient(int id) = 0; 
+    virtual void delete_patient(int id) = 0;
 };
 
-#endif // TRIAGE_QUEUE_INTERFACE_H
+#endif
+```
+
+## 5. Operation Behavior
+
+### `build_heap(patients)`
+
+Replaces the existing queue contents with the supplied patients.
+
+- The supplied patients must have unique IDs.
+- After the operation, every supplied patient is live.
+- Structure A must build its heap using bottom-up construction in
+  O(n) heap-building time.
+- The oracle stores the supplied patients in an unsorted array.
+
+### `insert(patient)`
+
+Adds a patient to the queue.
+
+- The patient's ID must not already belong to a live patient.
+- The queue orders the patient using `priority_key`.
+
+### `extract_min()`
+
+Removes and returns the highest-priority live patient.
+
+- The patient is selected using the ordering rules in Section 3.
+- The patient is no longer live after extraction.
+- Calling this operation on an empty queue throws `std::out_of_range`.
+
+### `decrease_key(id, new_key)`
+
+Updates the priority key of a live patient.
+
+- `new_key` must be less than or equal to the current key.
+- An equal key is allowed and leaves the logical priority unchanged.
+- A larger key causes `std::invalid_argument`.
+- A missing live patient ID causes `std::out_of_range`.
+- This operation changes only the key, not the stored severity.
+
+### `delete_patient(id)`
+
+Removes the live patient with the supplied ID.
+
+- The patient must not be returned by a later `extract_min`.
+- A missing live patient ID causes `std::out_of_range`.
+
+### Duplicate IDs
+
+`insert` throws `std::invalid_argument` if the ID is already live.
+`build_heap` throws `std::invalid_argument` if the input contains
+duplicate IDs.
+
+Patient IDs generated by the simulator are never reused during a run.
+Other callers must also avoid reusing an ID within the lifetime of a
+queue instance unless all implementations explicitly support it.
+
+## 6. Common Invariants
+
+After every successful operation:
+
+1. Every live patient has a unique ID.
+2. Every live patient has one current logical priority key.
+3. `extract_min` selects the first live patient according to the
+   ordering in Section 3.
+4. A deleted or extracted patient is no longer live.
+5. The number of logical live patients matches the queue's state.
+
+## 7. Structure A Invariants
+
+Structure A uses a binary min-heap and a locator mapping patient IDs
+to heap indices.
+
+1. **Heap order:** Every parent comes before or is equal to each child
+   under the ordering in Section 3.
+2. **Locator consistency:** For every valid heap index `i`:
+
+   ```text
+   locator[heap[i].id] = i
+   ```
+
+3. Every live patient appears exactly once in the heap.
+4. Every live patient has exactly one locator entry.
+5. Every heap swap updates the locator entries for both patients.
+6. The locator uses open addressing, linear probing, and deletion
+   handling, and is written from scratch.
+
+## 8. Structure B Invariants
+
+Structure B uses a heap with lazy invalidation.
+
+1. The heap can contain both current and stale entries.
+2. The version table identifies the current entry for each live patient.
+3. Stale entries must never be returned by `extract_min`.
+4. A priority update makes the previous entry stale and creates a
+   new current entry.
+5. When stale entries outnumber live entries, the heap is compacted.
+6. Compaction retains current entries and rebuilds a valid heap.
+
+## 9. Aging Policies
+
+The application calculates priority keys and passes them to the queue.
+The queue does not calculate aging on its own.
+
+### Linear aging
+
+Let:
+
+- `s` be the current medical severity.
+- `a` be the arrival time.
+- `C` be the common linear aging rate.
+
+The application uses the static key:
+
+```text
+priority_key = -s + C × a
+```
+
+Linear aging alone does not require periodic key updates. A clinical
+severity increase still requires a key update.
+
+### Step-wise escalation
+
+For the required interval of 30 minutes:
+
+```text
+steps = floor((current_time - arrival_time) / 30)
+priority_key = -severity - step_amount × steps
+```
+
+The application calls `decrease_key` at each escalation boundary.
+
+### Clinical severity revisions
+
+When a patient's medical severity increases:
+
+1. The application updates the severity in `waiting_room`.
+2. It calculates the new key for the active aging policy.
+3. It calls `decrease_key` with that key.
+
+## 10. Event Ordering
+
+For events occurring in the same simulated minute, the application
+processes them in this order:
+
+1. Patient arrival.
+2. Step-wise escalation.
+3. Clinical severity revision.
+4. Patient departure.
+5. Treatment.
+
+Therefore, an escalation at the exact minute of departure or treatment
+is processed before the patient leaves the queue.
