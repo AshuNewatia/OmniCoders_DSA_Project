@@ -6,6 +6,7 @@
 #include "locator_for_structure_A.cpp"
 #include "../../app/ITriageQueue.h"
 
+
 //Insert
 //Revision
 //Access Min
