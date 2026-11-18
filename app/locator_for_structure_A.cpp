@@ -7,15 +7,15 @@
 
     //Capacity is about twice the maximum expected. Default = 1024, Given 512 basic slots.
     struct twin{
-        std::string ID;
+        int ID;
         int address ;
-        twin(std::string ID, int i = -1): ID(ID), address(i){};
+        twin(int ID, int i = -1): ID(ID), address(i){};
     };
 
-    twin e("NA", -1);
+    twin e(-1, -1);
 
 
-    // RULES:  "NA" for a Not present, "DELETED" for deleted
+    // RULES:  "NA" is -1 "DELETED" is -2
     // e: Identity Element
     // ID can never be NA or DELETED
 
@@ -25,12 +25,13 @@
         std::vector<twin> tab;
         int state_count = 0;
         //Hash used here is Polynomial.
-        long long hashie (std::string input){
-            int n = input.length();
+        long long hashie (int input){
+            std::string input_str = std::to_string(input);
+            int n = input_str.length();
             long long hash = 0;
             int base = 31; //idk
             for(int i = 0; i < n; i++){
-                hash = hash*base + int(input[i]);
+                hash = hash*base + int(input_str[i]);
             }
             return hash;
         }
@@ -42,9 +43,9 @@
             tab.assign(CAP, e);
             state_count = 0;
             for(int i = 0; i < old_CAP; i++){
-                if(old_tab[i].ID != "NA" && old_tab[i].ID != "DELETED"){
+                if(old_tab[i].ID != -1 && old_tab[i].ID != -2){
                     int put = hashie(old_tab[i].ID) % CAP;
-                    while(tab[put].ID != "NA"){
+                    while(tab[put].ID != -1){
                         put = (put + 1) % CAP;
                     }
                     tab[put] = old_tab[i];
@@ -59,17 +60,20 @@
         }
 
         void Insert (twin in){
+            if(state_count > CAP-1){
+                resize();
+            }
             long long hash = hashie(in.ID);
             int put = hash%CAP;
             int pu1 = put;
-            while(tab[pu1].ID != "NA"){
+            while(tab[pu1].ID != -1){
                 if(tab[pu1].ID == in.ID){
                     tab[pu1].address = in.address;
                     return;
                 }
                 pu1 = (pu1+1)%CAP;
             }
-            while(tab[put].ID != "NA" && tab[put].ID != "DELETED"){
+            while(tab[put].ID != -1 && tab[put].ID != -2){
                 put = (put+1)%CAP;
             }
             state_count++;
@@ -80,10 +84,10 @@
 
         //Skipping deleting checks, coz this is personalised
 
-        int find(std::string ID){
+        int find(int ID){
             long long hash = hashie(ID);
             int ch = hash%CAP;
-            while(tab[ch].ID!=ID && tab[ch].ID != "NA"){
+            while(tab[ch].ID!=ID && tab[ch].ID != -1){
                 ch = (ch+1)%CAP;
             }
             if(tab[ch].ID != ID) {
@@ -93,10 +97,10 @@
             return tab[ch].address;
         }
 
-        void Delete(std::string in){
+        void Delete(int in){
             long long hash = hashie(in);
             int ch = hash%CAP;
-            while(tab[ch].ID!= in && tab[ch].ID != "NA"){
+            while(tab[ch].ID!= in && tab[ch].ID != -1){
                 ch = (ch+1)%CAP;
             }
             if(tab[ch].ID != in) {
@@ -104,12 +108,12 @@
                 return;
             }
             tab[ch].address = -1;
-            tab[ch].ID = "DELETED";
+            tab[ch].ID = -2;
             state_count--;
         }
 
 
-        void interchange (std::string f, std::string s){
+        void interchange (int  f, int s){
             long long hash = hashie(f);
             int ch = hash%CAP;
             while(tab[ch].ID!=f){
