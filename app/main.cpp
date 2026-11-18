@@ -1,32 +1,74 @@
 #include <iostream>
 #include <fstream>
-#include <vector>
+#include <string>
 #include <random>
 #include <unordered_map>
 #include <iterator>
+#include <cstdint>
+
 #include "ITriageQueue.h"
+
+#ifdef USE_STRUCTURE_A
+#include "../src/structA/IndexedHeap.h"
+#endif
+
 using namespace std;
 
-enum class AgingPolicy { NONE, LINEAR, STEP_WISE };
+enum class AgingPolicy {
+    NONE,
+    LINEAR,
+    STEP_WISE
+};
 
 struct WaitStats {
     long long total_wait_time = 0;
     int patient_count = 0;
 };
 
-void simulation(ITriageQueue* queue, AgingPolicy policy) {
-    unsigned int generated_seed = random_device{}();
-    mt19937_64 rng(generated_seed);
-    cout << "Starting simulation with RNG seed: " << generated_seed << endl;
+long long calculate_key(
+    const Patient& patient,
+    AgingPolicy policy,
+    int current_time,
+    int step_interval,
+    int linear_c,
+    int step_amount
+) {
+    long long key = -static_cast<long long>(patient.severity);
+
+    if (policy == AgingPolicy::LINEAR) {
+        key += static_cast<long long>(linear_c) * patient.arrival_time;
+    } else if (policy == AgingPolicy::STEP_WISE) {
+        int wait_time = current_time - patient.arrival_time;
+        int steps = wait_time / step_interval;
+
+        key -= static_cast<long long>(step_amount) * steps;
+    }
+
+    return key;
+}
+
+void simulation(
+    ITriageQueue* queue,
+    AgingPolicy policy,
+    uint64_t seed,
+    const string& log_filename
+) {
+    mt19937_64 rng(seed);
+
+    cout << "Starting simulation with RNG seed: " << seed << '\n';
 
     uniform_int_distribution<int> arrival_dist(1, 20);
     uniform_int_distribution<int> severity_dist(1, 50);
     uniform_int_distribution<int> treatment_dist(5, 10);
     uniform_int_distribution<int> leave_dist(1, 200);
 
+    uniform_int_distribution<int> revision_dist(1, 100);
+    uniform_int_distribution<int> revision_increase_dist(1, 5);
+
     const int TOTAL_MINS = 30 * 24 * 60;
-    const int STEP_INTERVAL = 20;
+    const int STEP_INTERVAL = 30;
     const int LINEAR_C = 1;
+    const int STEP_AMOUNT = 5;
 
     int doctor_free_at = 0;
     int patient_id_counter = 1;
@@ -34,81 +76,184 @@ void simulation(ITriageQueue* queue, AgingPolicy policy) {
     unordered_map<int, Patient> waiting_room;
     unordered_map<int, WaitStats> severity_stats;
 
-    ofstream log_file("results/simulation_log.csv");
+    ofstream log_file(log_filename);
+
     if (!log_file) {
-        cerr << "Cannot open log file. Ensure the results folder exists.\n";
+        cerr << "Cannot open log file: " << log_filename << '\n';
         return;
     }
-    log_file << "minute,event,patient_id,wait_time\n";
+
+    log_file << "minute,event,patient_id,wait_time,severity,priority_key\n";
 
     for (int curr = 0; curr < TOTAL_MINS; curr++) {
         if (arrival_dist(rng) == 1) {
             Patient p;
+
             p.id = patient_id_counter++;
             p.arrival_time = curr;
             p.severity = severity_dist(rng);
 
-            waiting_room[p.id] = p;
+            p.priority_key = calculate_key(
+                p,
+                policy,
+                curr,
+                STEP_INTERVAL,
+                LINEAR_C,
+                STEP_AMOUNT
+            );
 
-            if (policy == AgingPolicy::LINEAR) {
-                p.severity = p.severity + (LINEAR_C * p.arrival_time);
-            }
+            waiting_room[p.id] = p;
             queue->insert(p);
-            log_file << curr << ",ARRIVE," << p.id << ",0\n";
+
+            log_file
+                << curr << ",ARRIVE,"
+                << p.id << ",0,"
+                << p.severity << ","
+                << p.priority_key << '\n';
         }
 
         if (policy == AgingPolicy::STEP_WISE) {
             for (auto& entry : waiting_room) {
-                int id = entry.first;
                 Patient& p = entry.second;
                 int wait_time = curr - p.arrival_time;
+
                 if (wait_time > 0 && wait_time % STEP_INTERVAL == 0) {
-                    int new_severity = p.severity - 5 * (wait_time / STEP_INTERVAL);
-                    queue->decrease_key(id, new_severity);
-                    log_file << curr << ",ESCALATE," << id << "," << wait_time << "\n";
+                    long long new_key = calculate_key(
+                        p,
+                        policy,
+                        curr,
+                        STEP_INTERVAL,
+                        LINEAR_C,
+                        STEP_AMOUNT
+                    );
+
+                    queue->decrease_key(p.id, new_key);
+                    p.priority_key = new_key;
+
+                    log_file
+                        << curr << ",ESCALATE,"
+                        << p.id << ","
+                        << wait_time << ","
+                        << p.severity << ","
+                        << p.priority_key << '\n';
                 }
             }
+        }
+
+        if (!waiting_room.empty() && revision_dist(rng) == 1) {
+            auto it = waiting_room.begin();
+            advance(it, rng() % waiting_room.size());
+
+            Patient& p = it->second;
+
+            p.severity += revision_increase_dist(rng);
+
+            long long new_key = calculate_key(
+                p,
+                policy,
+                curr,
+                STEP_INTERVAL,
+                LINEAR_C,
+                STEP_AMOUNT
+            );
+
+            queue->decrease_key(p.id, new_key);
+            p.priority_key = new_key;
+
+            log_file
+                << curr << ",REVISE,"
+                << p.id << ","
+                << curr - p.arrival_time << ","
+                << p.severity << ","
+                << p.priority_key << '\n';
         }
 
         if (!waiting_room.empty() && leave_dist(rng) == 1) {
             auto it = waiting_room.begin();
             advance(it, rng() % waiting_room.size());
-            int id_to_leave = it->first;
 
-            queue->delete_patient(id_to_leave);
+            Patient p = it->second;
 
-            log_file << curr << ",ABANDON," << id_to_leave << "," << (curr - it->second.arrival_time) << "\n";
+            queue->delete_patient(p.id);
+
+            log_file
+                << curr << ",ABANDON,"
+                << p.id << ","
+                << curr - p.arrival_time << ","
+                << p.severity << ","
+                << p.priority_key << '\n';
+
             waiting_room.erase(it);
         }
 
         if (curr >= doctor_free_at && !waiting_room.empty()) {
             Patient treated = queue->extract_min();
-            int wait_time = curr - treated.arrival_time;
 
-            log_file << curr << ",TREAT," << treated.id << "," << wait_time << "\n";
+            auto it = waiting_room.find(treated.id);
 
-            int severity = waiting_room.at(treated.id).severity;
-            severity_stats[severity].total_wait_time += wait_time;
-            severity_stats[severity].patient_count++;
+            if (it == waiting_room.end()) {
+                cerr << "Queue returned an unknown patient ID: "
+                     << treated.id << '\n';
+                return;
+            }
 
-            waiting_room.erase(treated.id);
+            Patient current_patient = it->second;
+            int wait_time = curr - current_patient.arrival_time;
+
+            log_file
+                << curr << ",TREAT,"
+                << current_patient.id << ","
+                << wait_time << ","
+                << current_patient.severity << ","
+                << current_patient.priority_key << '\n';
+
+            WaitStats& stats = severity_stats[current_patient.severity];
+            stats.total_wait_time += wait_time;
+            stats.patient_count++;
+
+            waiting_room.erase(it);
+
             doctor_free_at = curr + treatment_dist(rng);
         }
     }
 
-    log_file.close();
-
     cout << "\n--- Waiting-Time Statistics Per Severity Class ---\n";
     cout << "Severity\tTotal Patients\tAverage Wait (mins)\n";
+
     for (const auto& entry : severity_stats) {
         int severity = entry.first;
         const WaitStats& stats = entry.second;
-        double avg_wait = static_cast<double>(stats.total_wait_time) / stats.patient_count;
-        cout << severity << "\t\t" << stats.patient_count << "\t\t" << avg_wait << "\n";
+
+        double average_wait =
+            static_cast<double>(stats.total_wait_time) / stats.patient_count;
+
+        cout << severity << "\t\t"
+             << stats.patient_count << "\t\t"
+             << average_wait << '\n';
     }
+
+    cout << "\nPatients still waiting after 30 days: "
+         << waiting_room.size() << '\n';
+
+    cout << "Event log saved to: " << log_filename << '\n';
 }
 
 int main() {
-    cout << "Simulator engine ready. Awaiting linked queues." << endl;
+#ifdef USE_STRUCTURE_A
+    IndexedHeap queue;
+
+    const uint64_t seed = 12345;
+
+    simulation(
+        &queue,
+        AgingPolicy::LINEAR,
+        seed,
+        "results/structure_a_linear.csv"
+    );
+#else
+    cout << "Simulator ready. Connect a queue that implements "
+         << "ITriageQueue before running the simulation.\n";
+#endif
+
     return 0;
 }
