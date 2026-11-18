@@ -8,8 +8,6 @@ struct Patient {
     int severity;
     int arrival_time;
     long long priority_key;
-    Patient(int ID, int sev): id (ID), severity (sev){};
-    Patient();
 };
 
 class ITriageQueue {
