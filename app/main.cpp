@@ -5,11 +5,10 @@
 #include <unordered_map>
 #include <iterator>
 #include <cstdint>
-
+#include "../src/structA/structure_A.cpp"
 #include "ITriageQueue.h"
 
 #ifdef USE_STRUCTURE_A
-#include "../src/structA/IndexedHeap.h"
 #endif
 
 using namespace std;
@@ -239,21 +238,14 @@ void simulation(
 }
 
 int main() {
-#ifdef USE_STRUCTURE_A
-    IndexedHeap queue;
-
-    const uint64_t seed = 12345;
+    Min_Heap queue;
 
     simulation(
         &queue,
-        AgingPolicy::LINEAR,
-        seed,
-        "results/structure_a_linear.csv"
+        AgingPolicy::STEP_WISE,
+        12345,
+        "results/structure_a_stepwise.csv"
     );
-#else
-    cout << "Simulator ready. Connect a queue that implements "
-         << "ITriageQueue before running the simulation.\n";
-#endif
 
     return 0;
 }
