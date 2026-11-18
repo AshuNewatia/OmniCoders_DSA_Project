@@ -12,7 +12,7 @@ struct Patient {
 
 class ITriageQueue {
 public:
-    virtual ~ITriageQueue(std::vector<Patient>& patients) = default;
+    virtual ~ITriageQueue() = default;
 
     virtual void build_heap(const std::vector<Patient>& patients) = 0;
 
