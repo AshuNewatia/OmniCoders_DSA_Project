@@ -15,6 +15,7 @@ public:
     virtual ~ITriageQueue() = default;
 
     virtual void build_heap() = 0;
+//build_heap is changed to not take arguments now
 
     virtual void insert(const Patient& patient) = 0;
 
