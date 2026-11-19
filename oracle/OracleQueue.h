@@ -1,6 +1,9 @@
 #ifndef ORACLE_QUEUE_H
 #define ORACLE_QUEUE_H
 
+#include <cstddef>
+#include <vector>
+
 #include "../app/ITriageQueue.h"
 
 // Reference implementation: patients are stored in an unsorted array.
@@ -12,7 +15,11 @@ public:
     void decrease_key(int id, int new_severity) override;
     void delete_patient(int id) override;
 
+    bool empty() const { return patients_.empty(); }
+    std::size_t size() const { return patients_.size(); }
+
 private:
+    static bool comes_before(const Patient& left, const Patient& right);
     std::vector<Patient> patients_;
 };
 
