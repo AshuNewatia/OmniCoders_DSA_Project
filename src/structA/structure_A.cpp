@@ -7,8 +7,17 @@
 #include "locator_for_structure_A.cpp"
 #include "../../app/ITriageQueue.h"
 
-class Min_Heap : public ITriageQueue {
-private:
+
+//Insert
+//Revision
+//Access Min
+//Pop Min 
+//Delete ID
+//O(1) access to records.
+
+
+class Min_Heap: public ITriageQueue {
+    private: 
     LookUp table;
     std::vector<Patient> Heap;
     int count = 0;

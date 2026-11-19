@@ -5,9 +5,9 @@
 #include <unordered_map>
 #include <iterator>
 #include <cstdint>
-#include "../src/structA/structure_A.cpp"
+// #include "../src/structA/structure_A.cpp"
 // #include "../src/structB/StructureB.cpp"
-// #include "../oracle/OracleQueue.h"
+#include "../oracle/OracleQueue.h"
 #include "ITriageQueue.h"
 
 using namespace std;
@@ -237,7 +237,7 @@ void simulation(
 }
 
 int main() {
-    Min_Heap queue;
+    OracleQueue queue;
 
     simulation(
         &queue,
