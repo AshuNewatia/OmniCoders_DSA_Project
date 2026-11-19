@@ -1,0 +1,40 @@
+#include <algorithm>
+#include <iostream>
+#include <limits>
+#include <stdexcept>
+#include <string>
+#include <vector>
+unsigned long long d5_comparisons = 0;
+#ifdef TEST_STRUCTURE_A
+#include "Structure_A.cpp"
+#else
+#include "Structure_B.cpp"
+#endif
+int main(int argc, char** argv) {
+    int n = argc > 1 ? std::stoi(argv[1]) : 1000;
+    if (n <= 0) return 2;
+    std::vector<Patient> ps;
+    for (int i=0;i<n;++i) ps.push_back(Patient{i+1, i+1, i, i+1});
+#ifdef TEST_STRUCTURE_A
+    Min_Heap queue(ps);
+    const char* impl="Structure_A";
+#else
+    LazyTriageQueue queue;
+    queue.build_heap(ps);
+    const char* impl="Structure_B";
+#endif
+    d5_comparisons=0;
+    for (int i=0;i<n;++i) queue.decrease_key(i+1, -static_cast<long long>(i+1));
+    unsigned long long update_comparisons=d5_comparisons;
+    d5_comparisons=0;
+    long long previous=std::numeric_limits<long long>::min();
+    for (int i=0;i<n;++i) {
+        Patient p=queue.extract_min();
+        if (p.priority_key < previous) {
+            std::cerr << "out-of-order extraction\n"; return 1;
+        }
+        previous=p.priority_key;
+    }
+    std::cout << impl << ",decrease_all_once," << n << ','
+              << update_comparisons << ',' << d5_comparisons << '\n';
+}
