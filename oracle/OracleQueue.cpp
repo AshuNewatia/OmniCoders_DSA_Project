@@ -2,10 +2,9 @@
 
 #include <stdexcept>
 
-namespace {
 // Local tie rule until the team finalizes a shared comparator:
 // smaller severity, then earlier arrival, then smaller patient ID.
-bool comes_before(const Patient& left, const Patient& right) {
+bool OracleQueue::comes_before(const Patient& left, const Patient& right) {
     if (left.severity != right.severity) {
         return left.severity < right.severity;
     }
@@ -13,7 +12,6 @@ bool comes_before(const Patient& left, const Patient& right) {
         return left.arrival_time < right.arrival_time;
     }
     return left.id < right.id;
-}
 }
 
 void OracleQueue::build_heap(const std::vector<Patient>& patients) {
@@ -47,12 +45,12 @@ Patient OracleQueue::extract_min() {
 }
 
 void OracleQueue::decrease_key(int id, int new_severity) {
-    for (Patient& patient : patients_) {
-        if (patient.id == id) {
-            if (new_severity > patient.severity) {
+    for (std::size_t i = 0; i < patients_.size(); ++i) {
+        if (patients_[i].id == id) {
+            if (new_severity > patients_[i].severity) {
                 throw std::invalid_argument("decrease_key cannot increase the key");
             }
-            patient.severity = new_severity;
+            patients_[i].severity = new_severity;
             return;
         }
     }
