@@ -14,8 +14,7 @@ class ITriageQueue {
 public:
     virtual ~ITriageQueue() = default;
 
-    virtual void build_heap() = 0;
-//build_heap is changed to not take arguments now
+    virtual void build_heap(const std::vector<Patient>& patients) = 0;
 
     virtual void insert(const Patient& patient) = 0;
 

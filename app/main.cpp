@@ -6,10 +6,9 @@
 #include <iterator>
 #include <cstdint>
 #include "../src/structA/structure_A.cpp"
+// #include "../src/structB/StructureB.cpp"
+// #include "../oracle/OracleQueue.h"
 #include "ITriageQueue.h"
-
-#ifdef USE_STRUCTURE_A
-#endif
 
 using namespace std;
 
@@ -242,9 +241,9 @@ int main() {
 
     simulation(
         &queue,
-        AgingPolicy::STEP_WISE,
+        AgingPolicy::LINEAR,
         12345,
-        "results/structure_a_stepwise.csv"
+        "results/structure_a_linear.csv"
     );
 
     return 0;

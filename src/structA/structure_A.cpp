@@ -3,124 +3,166 @@
 #include <stdexcept>
 #include <string>
 #include <algorithm>
+
 #include "locator_for_structure_A.cpp"
 #include "../../app/ITriageQueue.h"
 
-//Insert
-//Revision
-//Access Min
-//Pop Min 
-//Delete ID
-//O(1) access to records.
-
-
-class Min_Heap: public ITriageQueue {
-    private: 
+class Min_Heap : public ITriageQueue {
+private:
     LookUp table;
     std::vector<Patient> Heap;
     int count = 0;
-    //Heapify - The Floyd's Method
-    void Sift_Down(int sweet){
-        if(2*sweet+1 >= count) return;
-        else if (2*sweet + 2>= count){
-            if(Heap[2*sweet+1].priority_key < Heap[sweet].priority_key){
-                std::swap(Heap[2*sweet+1], Heap[sweet]);
-                table.interchange(Heap[sweet].id, Heap[2*sweet+1].id);
-            }
+
+    void Sift_Down(int index) {
+        if (2 * index + 1 >= count) {
+            return;
         }
-        else{
-            int min = Heap[2*sweet+2].priority_key < Heap[2*sweet+1].priority_key ? 2*sweet+2 : 2*sweet + 1;
-            if(Heap[sweet].priority_key>Heap[min].priority_key){
-                std::swap(Heap[sweet], Heap[min]);
-                table.interchange(Heap[sweet].id, Heap[min].id);
-                Sift_Down(min);
+
+        if (2 * index + 2 >= count) {
+            int left = 2 * index + 1;
+
+            if (Heap[left].priority_key < Heap[index].priority_key) {
+                std::swap(Heap[left], Heap[index]);
+                table.interchange(Heap[index].id, Heap[left].id);
             }
+
+            return;
+        }
+
+        int left = 2 * index + 1;
+        int right = 2 * index + 2;
+
+        int smallest =
+            Heap[right].priority_key < Heap[left].priority_key
+                ? right
+                : left;
+
+        if (Heap[index].priority_key > Heap[smallest].priority_key) {
+            std::swap(Heap[index], Heap[smallest]);
+
+            table.interchange(
+                Heap[index].id,
+                Heap[smallest].id
+            );
+
+            Sift_Down(smallest);
         }
     }
-    void build_heap() override {
-        for(int i = (count-1)/2 -1; i>=0; i--){
+
+    void heapify() {
+        for (int i = count / 2 - 1; i >= 0; i--) {
             Sift_Down(i);
         }
     }
-    //Insertion Drama
-    void Insertify(int kill){
-        if( (kill-1)/2  < 0) return;
-        else {
-            if(Heap[(kill-1)/2].priority_key >Heap[kill].priority_key){
-                std::swap(Heap[(kill-1)/2], Heap[kill]);
-                table.interchange(Heap[kill].id, Heap[(kill-1)/2].id);
-                Insertify((kill-1)/2);
-            }
+
+    void Insertify(int index) {
+        if (index <= 0) {
+            return;
+        }
+
+        int parent = (index - 1) / 2;
+
+        if (Heap[parent].priority_key > Heap[index].priority_key) {
+            std::swap(Heap[parent], Heap[index]);
+
+            table.interchange(
+                Heap[index].id,
+                Heap[parent].id
+            );
+
+            Insertify(parent);
         }
     }
 
+public:
+    Min_Heap() = default;
 
-    public:
+    Min_Heap(const std::vector<Patient>& patients) {
+        build_heap(patients);
+    }
 
-    Min_Heap()=default;
-    Min_Heap(std::vector<Patient> &tri){
-        // Insert(tri);
-        Heap.resize(tri.size());
-        count = tri.size();
-        for(int i = 0; i<tri.size(); i++){
-            table.Insert(twin(tri[i].id, i));
-            Heap[i] = tri[i];
+    void build_heap(
+        const std::vector<Patient>& patients
+    ) override {
+        table = LookUp();
+        Heap = patients;
+        count = static_cast<int>(Heap.size());
+
+        for (int i = 0; i < count; i++) {
+            table.Insert(twin(Heap[i].id, i));
         }
-        build_heap();
+
+        heapify();
     }
 
     void insert(const Patient& patient) override {
-        Heap.emplace_back(patient);
-        count = Heap.size();
-        twin tw(patient.id, count-1);
-        table.Insert(tw);
-        Insertify(count-1);
-    }
-    void insert(std::vector<Patient> &tri){
-        int n = tri.size();
-        for(int i = 0; i<n; i++){
-            Heap.emplace_back(tri[i]);
-            count = Heap.size();
-            twin tw(tri[i].id, count-1);
-            table.Insert(tw);
-            Insertify(count-1);
-        }
+        Heap.push_back(patient);
+        count = static_cast<int>(Heap.size());
+
+        table.Insert(twin(patient.id, count - 1));
+
+        Insertify(count - 1);
     }
 
-    Patient peek(){
-        if(count == 0){
-            throw std::out_of_range("No patients are currently waiting for triage.");;
+    Patient peek() {
+        if (count == 0) {
+            throw std::out_of_range(
+                "No patients are currently waiting for triage."
+            );
         }
+
         return Heap[0];
     }
+
     Patient extract_min() override {
-        if(count == 0){
-            throw std::out_of_range("No patients are currently waiting for triage.");;
+        if (count == 0) {
+            throw std::out_of_range(
+                "No patients are currently waiting for triage."
+            );
         }
-        Patient minnie = Heap[0];
-        std::swap(Heap[0], Heap[count-1]);
-        table.interchange(Heap[count-1].id, Heap[0].id);
-        table.Delete(Heap[count-1].id);
-        count--;
+
+        Patient minimum = Heap[0];
+
+        std::swap(Heap[0], Heap[count - 1]);
+
+        table.interchange(
+            Heap[count - 1].id,
+            Heap[0].id
+        );
+
+        table.Delete(Heap[count - 1].id);
+
         Heap.pop_back();
+        count--;
+
         Sift_Down(0);
-        return minnie;
+
+        return minimum;
     }
 
     void delete_patient(int id) override {
-        int val = table.find(id);
-        std::swap(Heap[val], Heap[count-1]);
-        table.interchange(Heap[val].id, Heap[count-1].id);
-        table.Delete(Heap[count-1].id);
-        count--;
+        int index = table.find(id);
+
+        std::swap(Heap[index], Heap[count - 1]);
+
+        table.interchange(
+            Heap[index].id,
+            Heap[count - 1].id
+        );
+
+        table.Delete(Heap[count - 1].id);
+
         Heap.pop_back();
-        Sift_Down(val);
+        count--;
+
+        Sift_Down(index);
     }
 
     void decrease_key(int id, long long new_key) override {
-        int val = table.find(id);
-        Heap[val].priority_key = new_key;
-        Insertify(val);
+        int index = table.find(id);
+
+        Heap[index].priority_key = new_key;
+
+        Insertify(index);
     }
-    
 };
