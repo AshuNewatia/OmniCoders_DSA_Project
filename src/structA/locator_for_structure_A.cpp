@@ -1,132 +1,112 @@
-    #include <iostream>
-    #include <vector>
-    #include <string>
-    #include <stdexcept>
-    #include <algorithm>
-    int CAP = 1024;
+#include <algorithm>
+#include <stdexcept>
+#include <string>
+#include <vector>
 
-    //Capacity is about twice the maximum expected. Default = 1024, Given 512 basic slots.
-    struct twin{
-        int ID;
-        int address ;
-        twin(int ID, int i = -1): ID(ID), address(i){};
-    };
+int CAP = 1024;
 
-    twin e(-1, -1);
+struct twin {
+    int ID;
+    int address;
+    twin(int id, int index = -1) : ID(id), address(index) {}
+};
 
+twin e(-1, -1);
 
-    // RULES:  "NA" is -1 "DELETED" is -2
-    // e: Identity Element
-    // ID can never be NA or DELETED
+class LookUp {
+private:
+    std::vector<twin> tab;
+    int state_count = 0;
+    // Includes deleted slots: this is the actual probe-table occupancy.
+    int used_count = 0;
 
+    long long hashie(int input) const {
+        const std::string input_str = std::to_string(input);
+        long long hash = 0;
+        for (char ch : input_str) hash = hash * 31 + static_cast<unsigned char>(ch);
+        return hash;
+    }
 
-    class LookUp{
-        private:
-        std::vector<twin> tab;
-        int state_count = 0;
-        //Hash used here is Polynomial.
-        long long hashie (int input){
-            std::string input_str = std::to_string(input);
-            int n = input_str.length();
-            long long hash = 0;
-            int base = 31; //idk
-            for(int i = 0; i < n; i++){
-                hash = hash*base + int(input_str[i]);
-            }
-            return hash;
+    int find_slot(int id) const {
+        const int start = static_cast<int>(hashie(id) % CAP);
+        for (int offset = 0; offset < CAP; ++offset) {
+            const int slot = (start + offset) % CAP;
+            if (tab[slot].ID == id) return slot;
+            if (tab[slot].ID == -1) return -1;
+        }
+        return -1;
+    }
+
+    void resize(int new_capacity) {
+        const std::vector<twin> old_tab = tab;
+        CAP = new_capacity;
+        tab.assign(CAP, e);
+        state_count = 0;
+        used_count = 0;
+        for (const twin& entry : old_tab) {
+            if (entry.ID != -1 && entry.ID != -2) Insert(entry);
+        }
+    }
+
+public:
+    LookUp() : tab(CAP, e) {}
+
+    void Insert(twin in) {
+        // If tombstones caused the table to fill, rehash at the same size;
+        // grow only when the live set itself needs more capacity.
+        if ((used_count + 1) * 10 >= CAP * 7) {
+            const int new_capacity = (state_count + 1) * 2 < CAP ? CAP : 2 * CAP;
+            resize(new_capacity);
         }
 
-        void resize(){
-            std::vector<twin> old_tab = tab;
-            int old_CAP = CAP;
-            CAP = 2*CAP;
-            tab.assign(CAP, e);
-            state_count = 0;
-            for(int i = 0; i < old_CAP; i++){
-                if(old_tab[i].ID != -1 && old_tab[i].ID != -2){
-                    int put = hashie(old_tab[i].ID) % CAP;
-                    while(tab[put].ID != -1){
-                        put = (put + 1) % CAP;
-                    }
-                    tab[put] = old_tab[i];
-                    state_count++;
-                }
-            }
-        }
-
-        public:
-        LookUp(){
-            tab.resize(CAP, e);
-        }
-
-        void Insert (twin in){
-            if(state_count > CAP-1){
-                resize();
-            }
-            long long hash = hashie(in.ID);
-            int put = hash%CAP;
-            int pu1 = put;
-            while(tab[pu1].ID != -1){
-                if(tab[pu1].ID == in.ID){
-                    tab[pu1].address = in.address;
-                    return;
-                }
-                pu1 = (pu1+1)%CAP;
-            }
-            while(tab[put].ID != -1 && tab[put].ID != -2){
-                put = (put+1)%CAP;
-            }
-            state_count++;
-            tab[put].ID = in.ID;
-            tab[put].address = in.address;
-        }
-
-
-        //Skipping deleting checks, coz this is personalised
-
-        int find(int ID){
-            long long hash = hashie(ID);
-            int ch = hash%CAP;
-            while(tab[ch].ID!=ID && tab[ch].ID != -1){
-                ch = (ch+1)%CAP;
-            }
-            if(tab[ch].ID != ID) {
-                throw std::out_of_range("Not Found");
-            }
-            return tab[ch].address;
-        }
-
-        void Delete(int in){
-            long long hash = hashie(in);
-            int ch = hash%CAP;
-            while(tab[ch].ID!= in && tab[ch].ID != -1){
-                ch = (ch+1)%CAP;
-            }
-            if(tab[ch].ID != in) {
-                throw std::out_of_range("Not Found");
+        const int start = static_cast<int>(hashie(in.ID) % CAP);
+        int first_deleted = -1;
+        for (int offset = 0; offset < CAP; ++offset) {
+            const int slot = (start + offset) % CAP;
+            if (tab[slot].ID == in.ID) {
+                tab[slot].address = in.address;
                 return;
             }
-            tab[ch].address = -1;
-            tab[ch].ID = -2;
-            state_count--;
+            if (tab[slot].ID == -2 && first_deleted == -1)
+                first_deleted = slot;
+            if (tab[slot].ID == -1) {
+                const int put = first_deleted == -1 ? slot : first_deleted;
+                if (first_deleted == -1) ++used_count;
+                tab[put] = in;
+                ++state_count;
+                return;
+            }
         }
 
-
-        void interchange (int  f, int s){
-            long long hash = hashie(f);
-            int ch = hash%CAP;
-            while(tab[ch].ID!=f){
-                ch = (ch+1)%CAP;
-            }
-            int first = ch;
-
-            hash = hashie(s);
-            ch = hash%CAP;
-            while(tab[ch].ID!=s){
-                ch = (ch+1)%CAP;
-            }
-            int second = ch;
-
-            std::swap(tab[first].address, tab[second].address);
+        // A full probe cycle may still find a reusable tombstone.
+        if (first_deleted != -1) {
+            tab[first_deleted] = in;
+            ++state_count;
+            return;
         }
-    };
+        resize(2 * CAP);
+        Insert(in);
+    }
+
+    int find(int id) const {
+        const int slot = find_slot(id);
+        if (slot == -1) throw std::out_of_range("Not Found");
+        return tab[slot].address;
+    }
+
+    void Delete(int id) {
+        const int slot = find_slot(id);
+        if (slot == -1) throw std::out_of_range("Not Found");
+        tab[slot].address = -1;
+        tab[slot].ID = -2;
+        --state_count;
+    }
+
+    void interchange(int first_id, int second_id) {
+        const int first = find_slot(first_id);
+        const int second = find_slot(second_id);
+        if (first == -1 || second == -1)
+            throw std::out_of_range("Locator entry missing during heap swap");
+        std::swap(tab[first].address, tab[second].address);
+    }
+};
