@@ -143,4 +143,8 @@ The experiment runner performs the required benchmark compilation automatically.
 
 The plotted series shows the maximum measured extraction-comparison count among the six distinct-key patterns for each size. The chart is saved as `results/d5_comparison_plot.png`.
 
+ adversary
 ![D5 extraction comparison growth](../results/d5_comparison_plot.png)
+
+![D5 extraction comparison growth](../results/d5_comparison_plot.png)
+ main
