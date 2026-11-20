@@ -113,6 +113,9 @@ private:
     int Left_C(int i) { return 2 * i + 1; }  
 
     bool comes_before(const Patient& a, const Patient& b) const {
+        #ifdef D5_COUNT_COMPARISONS
+              ++d5_comparisons;
+        #endif
         if (a.priority_key != b.priority_key)
             return a.priority_key < b.priority_key;
         if (a.arrival_time != b.arrival_time)
