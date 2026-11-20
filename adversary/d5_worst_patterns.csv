@@ -1,0 +1,15 @@
+structure,pattern,total_extraction_comparisons
+A,random,313619
+A,descending,108912
+A,alternating,105115
+A,bit-reversal,104533
+A,ascending,104392
+A,sawtooth,104285
+A,equal-reverse-arrival,12570
+B,random,313619
+B,descending,108912
+B,equal-reverse-arrival,108912
+B,alternating,105115
+B,bit-reversal,104533
+B,ascending,104392
+B,sawtooth,104285

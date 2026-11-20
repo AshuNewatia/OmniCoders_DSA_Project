@@ -17,7 +17,7 @@
  * for those implementations. Use the generated CSV as build_heap input,
  * then run n extract_min operations while counting key comparisons.
  *
- * CSV columns: id,severity,arrival_time
+ * CSV columns: id,severity,arrival_time,priority_key
  *
  * Build:
  *   g++ -std=c++17 -O2 -Wall -Wextra -pedantic Adversary.cpp -o adversary
@@ -149,10 +149,10 @@ int main(int argc, char** argv) {
 
         const auto patients = generate_patients(n, pattern, seed);
 
-        std::cout << "id,severity,arrival_time\n";
+        std::cout << "id,severity,arrival_time,priority_key\n";
         for (const Patient& p : patients) {
             std::cout << p.id << ',' << p.severity << ','
-                      << p.arrival_time << '\n';
+                      << p.arrival_time << ',' << p.severity << '\n';
         }
     } catch (const std::exception& ex) {
         std::cerr << "Error: " << ex.what() << '\n';

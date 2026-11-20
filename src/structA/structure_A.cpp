@@ -7,17 +7,15 @@
 #include "locator_for_structure_A.cpp"
 #include "../../app/ITriageQueue.h"
 
+#ifdef D5_COUNT_COMPARISONS
+extern unsigned long long d5_comparisons;
+#define D5_COMPARE(expression) (++d5_comparisons, (expression))
+#else
+#define D5_COMPARE(expression) (expression)
+#endif
 
-//Insert
-//Revision
-//Access Min
-//Pop Min 
-//Delete ID
-//O(1) access to records.
-
-
-class Min_Heap: public ITriageQueue {
-    private: 
+class Min_Heap : public ITriageQueue {
+private:
     LookUp table;
     std::vector<Patient> Heap;
     int count = 0;
@@ -30,9 +28,15 @@ class Min_Heap: public ITriageQueue {
         if (2 * index + 2 >= count) {
             int left = 2 * index + 1;
 
-            if (Heap[left].priority_key < Heap[index].priority_key) {
+            if (D5_COMPARE(
+                    Heap[left].priority_key < Heap[index].priority_key
+                )) {
                 std::swap(Heap[left], Heap[index]);
-                table.interchange(Heap[index].id, Heap[left].id);
+
+                table.interchange(
+                    Heap[index].id,
+                    Heap[left].id
+                );
             }
 
             return;
@@ -42,11 +46,15 @@ class Min_Heap: public ITriageQueue {
         int right = 2 * index + 2;
 
         int smallest =
-            Heap[right].priority_key < Heap[left].priority_key
+            D5_COMPARE(
+                Heap[right].priority_key < Heap[left].priority_key
+            )
                 ? right
                 : left;
 
-        if (Heap[index].priority_key > Heap[smallest].priority_key) {
+        if (D5_COMPARE(
+                Heap[index].priority_key > Heap[smallest].priority_key
+            )) {
             std::swap(Heap[index], Heap[smallest]);
 
             table.interchange(
@@ -71,7 +79,9 @@ class Min_Heap: public ITriageQueue {
 
         int parent = (index - 1) / 2;
 
-        if (Heap[parent].priority_key > Heap[index].priority_key) {
+        if (D5_COMPARE(
+                Heap[parent].priority_key > Heap[index].priority_key
+            )) {
             std::swap(Heap[parent], Heap[index]);
 
             table.interchange(
@@ -175,3 +185,5 @@ public:
         Insertify(index);
     }
 };
+
+#undef D5_COMPARE
