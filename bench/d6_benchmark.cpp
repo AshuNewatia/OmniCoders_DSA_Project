@@ -133,6 +133,8 @@ int main(int argc, char** argv) {
     int pending_revisions = 0;
     int escalations = 0;
     int peak_live = 0;
+    unsigned long long live_size_sum = 0;
+    unsigned long long live_size_samples = 0;
 
     auto timed = [](Totals& total, auto&& operation) {
         const long long start = clock_ticks();
@@ -212,6 +214,8 @@ int main(int argc, char** argv) {
             active.pop_back();
         }
         peak_live = std::max(peak_live, static_cast<int>(active.size()));
+        live_size_sum += static_cast<unsigned long long>(active.size());
+        ++live_size_samples;
     }
 
     // Any revision event due at the final minute is already processed above.
@@ -228,7 +232,7 @@ int main(int argc, char** argv) {
                  "arrivals,treatments,departures,revisions,escalations,peak_live,"
                  "insert_ns,extract_ns,revision_ns,delete_ns,escalation_ns,total_queue_ns,"
                  "insert_count,extract_count,revision_count,delete_count,escalation_count,"
-                 "peak_working_set_bytes,treatment_id_checksum\n";
+                 "peak_working_set_bytes,treatment_id_checksum,mean_live_queue\n";
     unsigned long long checksum = 0;
     for (int id : treatments) checksum = checksum * 1315423911ULL + static_cast<unsigned>(id);
     std::cout << implementation << ',' << policy << ',' << share_pct << ',' << actual_share << ',' << seed
@@ -238,6 +242,8 @@ int main(int argc, char** argv) {
               << ',' << delete_ns << ',' << escalation_ns << ',' << total_ns
               << ',' << insert_t.count << ',' << extract_t.count << ',' << revision_t.count
               << ',' << delete_t.count << ',' << escalation_t.count
-              << ',' << peak_working_set_bytes() << ',' << checksum << '\n';
+              << ',' << peak_working_set_bytes() << ',' << checksum << ','
+              << (live_size_samples == 0 ? 0.0 : static_cast<double>(live_size_sum) / live_size_samples)
+              << '\n';
     return 0;
 }
