@@ -1,0 +1,4 @@
+# Saved trace hashes must survive Windows/Linux checkouts unchanged.
+results/differential/**/*.trace text eol=lf
+# Preserve the exact bytes of the earlier passing log recorded in its manifest.
+results/oracle_validation/run.log -text whitespace=trailing-space,space-before-tab,cr-at-eol

@@ -1,0 +1,72 @@
+C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp:130:2: error: expected '}' at end of input
+  130 | }
+      |  ^
+In file included from C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp:15:
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:17:38: note: to match this '{'
+   17 | class Min_Heap : public ITriageQueue {
+      |                                      ^
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp: In member function 'void Min_Heap::Sift_Down(int)':
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:39:2: error: 'adversary' was not declared in this scope
+   39 |  adversary
+      |  ^~~~~~~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:57:13: error: redeclaration of 'int left'
+   57 |         int left = 2 * index + 1;
+      |             ^~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:37:17: note: 'int left' previously declared here
+   37 |             int left = 2 * index + 1;
+      |                 ^~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:61:9: error: expected ';' before 'int'
+   61 |         int smallest =
+      |         ^~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:69:49: error: 'smallest' was not declared in this scope
+   69 |                 Heap[index].priority_key > Heap[smallest].priority_key
+      |                                                 ^~~~~~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:14:33: note: in definition of macro 'D5_COMPARE'
+   14 | #define D5_COMPARE(expression) (expression)
+      |                                 ^~~~~~~~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:72:13: error: redeclaration of 'int smallest'
+   72 |         int smallest = comes_before(Heap[right], Heap[left]) ? right : left;
+      |             ^~~~~~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:69:49: note: '<typeprefixerror>smallest' previously declared here
+   69 |                 Heap[index].priority_key > Heap[smallest].priority_key
+      |                                                 ^~~~~~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:14:33: note: in definition of macro 'D5_COMPARE'
+   14 | #define D5_COMPARE(expression) (expression)
+      |                                 ^~~~~~~~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:75:2: error: 'main' was not declared in this scope
+   75 |  main
+      |  ^~~~
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:87:20: error: a function-definition is not allowed here before '{' token
+   87 |     void heapify() {
+      |                    ^
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:93:31: error: a function-definition is not allowed here before '{' token
+   93 |     void Insertify(int index) {
+      |                               ^
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:223:2: error: expected ';' before 'main'
+  223 |  main
+      |  ^~~~
+C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp:24:49: error: a function-definition is not allowed here before '{' token
+   24 | Patient read_patient(std::istringstream& input) {
+      |                                                 ^
+C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp:32:57: error: a function-definition is not allowed here before '{' token
+   32 | void write_patient(std::ostream& out, const Patient& p) {
+      |                                                         ^
+C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp:36:33: error: a function-definition is not allowed here before '{' token
+   36 | int main(int argc, char** argv) {
+      |                                 ^
+C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp:130:2: error: expected '}' at end of input
+  130 | }
+      |  ^
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:36:37: note: to match this '{'
+   36 |         if (2 * index + 2 >= count) {
+      |                                     ^
+C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp:130:2: error: expected '}' at end of input
+  130 | }
+      |  ^
+C:/OmniCoders_DSA_Project/src/structA/structure_A.cpp:31:31: note: to match this '{'
+   31 |     void Sift_Down(int index) {
+      |                               ^
+C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp: At global scope:
+C:\OmniCoders_DSA_Project\oracle\differential_driver.cpp:130:2: error: expected unqualified-id at end of input
+  130 | }
+      |  ^

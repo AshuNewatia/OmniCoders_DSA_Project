@@ -1,0 +1,4 @@
+OK INSERT
+PATIENT 1 4 0 -4
+ERROR out_of_range
+ERROR out_of_range

@@ -1,0 +1,67 @@
+{
+  "status": "COMPILE_FAILED",
+  "timestamp_utc": "2026-11-21T08:23:48.412045+00:00",
+  "scope": "Functional queue differential testing; no internal invariants, timing or simulator verification.",
+  "arguments": {
+    "compiler": null,
+    "seed": null,
+    "steps": 2000,
+    "case": null,
+    "replay": null,
+    "timeout": 20
+  },
+  "builds": {
+    "oracle": {
+      "command": [
+        "C:\\OmniCoders_DSA_Project\\tmp\\toolchains\\mingw64\\bin\\g++.exe",
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-pedantic",
+        "C:\\OmniCoders_DSA_Project\\oracle\\differential_driver.cpp",
+        "C:\\OmniCoders_DSA_Project\\oracle\\OracleQueue.cpp",
+        "-o",
+        "C:\\OmniCoders_DSA_Project\\tmp\\differential\\oracle.exe"
+      ],
+      "exit_code": 0,
+      "timeout": false
+    },
+    "A": {
+      "command": [
+        "C:\\OmniCoders_DSA_Project\\tmp\\toolchains\\mingw64\\bin\\g++.exe",
+        "-std=c++17",
+        "-O2",
+        "-Wall",
+        "-Wextra",
+        "-pedantic",
+        "-DDIFF_QUEUE_A",
+        "C:\\OmniCoders_DSA_Project\\oracle\\differential_driver.cpp",
+        "-o",
+        "C:\\OmniCoders_DSA_Project\\tmp\\differential\\A.exe"
+      ],
+      "exit_code": 1,
+      "timeout": false
+    }
+  },
+  "cases": [],
+  "source_sha256": {
+    "app/ITriageQueue.h": "bb2b833d2bbf23155f0f66f14ca5f58e4925f51ae28144583277c29d2457008f",
+    "oracle/OracleQueue.h": "e1037ccaac31c870aa7cf8b686dedfa09301053fa5e40bc0aad6b5764a418446",
+    "oracle/OracleQueue.cpp": "4d88ee56923b4a84870724695e835c30eee525981e7e75caf1d2eb4b90bb465e",
+    "oracle/differential_driver.cpp": "83cded2e044ac39d99845a242413767a1c693be35843829d0a95abdae280c17d",
+    "oracle/run_differential.py": "13d833101cb64b03e5a2542689f729cc3a0e3dffb684f131f844cde0bd188f5f",
+    "src/structA/structure_A.cpp": "1fe5abcad6a106f67494144700736cc181148d6a0686e507dd7e193681b7c75d",
+    "src/structA/locator_for_structure_A.cpp": "89a3990653065b934f88decd551f14d2412bbbcba82ac47a7e4dc07f51025820",
+    "src/structB/structureB.cpp": "4974219e1e38a73003ec9f84d24e90bb21f2fca51b86665f8b0180d4ef10c6be"
+  },
+  "commit": "3f0fed091646ba02200ffb1526386e5c12167b75",
+  "git_status": [
+    " D results/dashboard_latest.csv",
+    " M src/structB/StructureB.cpp",
+    "?? detail.md",
+    "?? results/differential/",
+    "?? results/oracle_validation/"
+  ],
+  "compiler_version": "g++.exe (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3) 14.2.0"
+}

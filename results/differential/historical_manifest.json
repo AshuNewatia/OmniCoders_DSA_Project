@@ -1,0 +1,831 @@
+{
+  "status": "HISTORICAL_FAIL",
+  "base_commit": "5f846f7976f39441af6665df81b118bdc3084dec",
+  "timestamp_utc": "2026-11-20T21:17:23.864771+00:00",
+  "provenance": "Reconstructed from preserved per-case outputs, input traces, summary.log and the earlier report. The original manifest was overwritten by the latest compilation attempt. No new queue execution is claimed by this reconstruction.",
+  "source_sha256": {
+    "app/ITriageQueue.h": "bb2b833d2bbf23155f0f66f14ca5f58e4925f51ae28144583277c29d2457008f",
+    "oracle/OracleQueue.h": "e1037ccaac31c870aa7cf8b686dedfa09301053fa5e40bc0aad6b5764a418446",
+    "oracle/OracleQueue.cpp": "4d88ee56923b4a84870724695e835c30eee525981e7e75caf1d2eb4b90bb465e",
+    "oracle/differential_driver.cpp": "83cded2e044ac39d99845a242413767a1c693be35843829d0a95abdae280c17d",
+    "oracle/run_differential.py": "13d833101cb64b03e5a2542689f729cc3a0e3dffb684f131f844cde0bd188f5f",
+    "src/structA/structure_A.cpp": "8718d59be0148848be7a4aedb4c0aaed10139896c37cf1762d06a6a1c840a5a3",
+    "src/structA/locator_for_structure_A.cpp": "89a3990653065b934f88decd551f14d2412bbbcba82ac47a7e4dc07f51025820",
+    "src/structB/structureB.cpp": "4974219e1e38a73003ec9f84d24e90bb21f2fca51b86665f8b0180d4ef10c6be"
+  },
+  "cases": [
+    {
+      "name": "empty_errors",
+      "trace": "results\\differential\\empty_errors\\input.trace",
+      "trace_sha256": "5176b897264d6ce3cbf654823c405085b3a13198b69234a0044bd2dbc17c8879",
+      "trace_lines": 4,
+      "requested_operations": 3,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4
+        }
+      }
+    },
+    {
+      "name": "basic_order",
+      "trace": "results\\differential\\basic_order\\input.trace",
+      "trace_sha256": "b5537b3f96710264d9c31d2bde83703eceedb002e9dfd45b6023e25f55773e27",
+      "trace_lines": 7,
+      "requested_operations": 5,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 7
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 7
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 7
+        }
+      }
+    },
+    {
+      "name": "all_tie_breaks",
+      "trace": "results\\differential\\all_tie_breaks\\input.trace",
+      "trace_sha256": "4d84e7ca50d5df38743987e2b512126eb658c17a2ffce0b11f9da20f9d90be8d",
+      "trace_lines": 2,
+      "requested_operations": 1,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 2
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 2
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 2
+        }
+      }
+    },
+    {
+      "name": "decrease_preserves_patient_fields",
+      "trace": "results\\differential\\decrease_preserves_patient_fields\\input.trace",
+      "trace_sha256": "b9f8025b94f17b10853027161154d355b5747a52eaad811509a895720b75fb1f",
+      "trace_lines": 5,
+      "requested_operations": 3,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 5
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 5
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 5
+        }
+      }
+    },
+    {
+      "name": "invalid_increase_no_mutation",
+      "trace": "results\\differential\\invalid_increase_no_mutation\\input.trace",
+      "trace_sha256": "9c66325beed20ac74fa7e4c408f7ea875599086cd8dd865c43a1a26ea8015406",
+      "trace_lines": 7,
+      "requested_operations": 4,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 7
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 7
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 7
+        }
+      }
+    },
+    {
+      "name": "arbitrary_delete_needs_upward_repair",
+      "trace": "results\\differential\\arbitrary_delete_needs_upward_repair\\input.trace",
+      "trace_sha256": "05d6b79e2abcc1c0c5e191f6ad3b710b461ec55c20fed3a74428f0a4987e53a9",
+      "trace_lines": 3,
+      "requested_operations": 2,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 3
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 3
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 3
+        }
+      }
+    },
+    {
+      "name": "delete_first_middle_last",
+      "trace": "results\\differential\\delete_first_middle_last\\input.trace",
+      "trace_sha256": "5c909e455de96b8c85a5a703279c0e7252f37e9dd76140df710096ca370b3f3b",
+      "trace_lines": 8,
+      "requested_operations": 5,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 8
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 8
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 8
+        }
+      }
+    },
+    {
+      "name": "replace_and_clear",
+      "trace": "results\\differential\\replace_and_clear\\input.trace",
+      "trace_sha256": "3e647005e9f57ff6b96563ff76406981c1d84b80423109c52515e2c6604a4ef9",
+      "trace_lines": 5,
+      "requested_operations": 3,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 5
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 5
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 5
+        }
+      }
+    },
+    {
+      "name": "removed_ids_missing",
+      "trace": "results\\differential\\removed_ids_missing\\input.trace",
+      "trace_sha256": "970a224f0df95950cbbee3dae2e6f96ac0eec45b916cb1f9f0b5bf4fa73bbad4",
+      "trace_lines": 4,
+      "requested_operations": 4,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4
+        }
+      }
+    },
+    {
+      "name": "long_long_limits",
+      "trace": "results\\differential\\long_long_limits\\input.trace",
+      "trace_sha256": "c1b7b70d01e37e166a94367dda8914e910cae79c9f3390c3698d5fa094247719",
+      "trace_lines": 4,
+      "requested_operations": 2,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4
+        }
+      }
+    },
+    {
+      "name": "duplicate_live_insert",
+      "trace": "results\\differential\\duplicate_live_insert\\input.trace",
+      "trace_sha256": "da59dac5c939c0334334a4445be5321d2f1551895c6d63e2122322a0547413bb",
+      "trace_lines": 3,
+      "requested_operations": 2,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 3
+        },
+        "A": {
+          "status": "FAIL",
+          "response_lines": 3,
+          "first_difference": {
+            "trace_line": 2,
+            "operation": "INSERT 1 50 99 -100",
+            "expected": "ERROR invalid_argument",
+            "actual": "OK INSERT"
+          }
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 3
+        }
+      }
+    },
+    {
+      "name": "duplicate_build",
+      "trace": "results\\differential\\duplicate_build\\input.trace",
+      "trace_sha256": "2a8f68e7ded2951fc399d0bcead9a69872b3179d369bccdbef704747ff88f672",
+      "trace_lines": 2,
+      "requested_operations": 2,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 2
+        },
+        "A": {
+          "status": "FAIL",
+          "response_lines": 2,
+          "first_difference": {
+            "trace_line": 2,
+            "operation": "BUILD 3 1 4 0 -4 2 4 0 -4 1 9 20 -9",
+            "expected": "ERROR invalid_argument",
+            "actual": "OK BUILD"
+          }
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 2
+        }
+      }
+    },
+    {
+      "name": "tie_heavy_1000",
+      "trace": "results\\differential\\tie_heavy_1000\\input.trace",
+      "trace_sha256": "10b55bd4d00f7db22e1f252a03f70d5c78f1cc096c0175c3704bbff2af25cef9",
+      "trace_lines": 2,
+      "requested_operations": 1,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 2
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 2
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 2
+        }
+      }
+    },
+    {
+      "name": "repeated_revisions_and_stale_delete",
+      "trace": "results\\differential\\repeated_revisions_and_stale_delete\\input.trace",
+      "trace_sha256": "3e6a1c6890d7531cfdfd2e2aeb6add0ad02f85f157aa92ca206cc5b76dd7cbc5",
+      "trace_lines": 805,
+      "requested_operations": 403,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 805
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 805
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 805
+        }
+      }
+    },
+    {
+      "name": "stale_entries_below_extracted_patients",
+      "trace": "results\\differential\\stale_entries_below_extracted_patients\\input.trace",
+      "trace_sha256": "f3d23dd79a36b8c4e2a478092a878d1048adcad6bb99992e45b8f68c1f524fc8",
+      "trace_lines": 10,
+      "requested_operations": 8,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 10
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 10
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 10
+        }
+      }
+    },
+    {
+      "name": "tombstone_churn_1500",
+      "trace": "results\\differential\\tombstone_churn_1500\\input.trace",
+      "trace_sha256": "e1e0d45bbfd6ac805ec51554a6ac639003ddbe678617717d633a062b779a711b",
+      "trace_lines": 3004,
+      "requested_operations": 3002,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 3004
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 3004
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 3004
+        }
+      }
+    },
+    {
+      "name": "resize_and_large_live_set",
+      "trace": "results\\differential\\resize_and_large_live_set\\input.trace",
+      "trace_sha256": "c3e22fa73ffbe63e7892d6064701c208468c73a707c9379c28e14906dba24d75",
+      "trace_lines": 6,
+      "requested_operations": 3,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 6
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 6
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 6
+        }
+      }
+    },
+    {
+      "name": "step_like_supplied_updates",
+      "trace": "results\\differential\\step_like_supplied_updates\\input.trace",
+      "trace_sha256": "6ae9f10d51439353d01f9ca3a86b601db6724750cdcaec8b69fd837e65b521d5",
+      "trace_lines": 6,
+      "requested_operations": 3,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 6
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 6
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 6
+        }
+      }
+    },
+    {
+      "name": "random_seed_1",
+      "trace": "results\\differential\\random_seed_1\\input.trace",
+      "trace_sha256": "f7ff2ca05ea7a3c38669484d6c10a515e0f1ce4e7145e55b262b11b8e5aa7243",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_2",
+      "trace": "results\\differential\\random_seed_2\\input.trace",
+      "trace_sha256": "841d74c52aee4c653f495abce169769d04e3a7deaa9db88e8f2afcb544822d80",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_3",
+      "trace": "results\\differential\\random_seed_3\\input.trace",
+      "trace_sha256": "483228fad93a8352cdb3e1410abd8558b211c1c7835cf11f7dcdc043a87831a8",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_4",
+      "trace": "results\\differential\\random_seed_4\\input.trace",
+      "trace_sha256": "18abb5e0cb12c7d3bc5b08d26cf1a3408f9b6c8b48455e47bc90a968f26bc225",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_5",
+      "trace": "results\\differential\\random_seed_5\\input.trace",
+      "trace_sha256": "4835a8deb619d7475ed19b6faa22b21d7313bff59fa9cc30173f8d67cad29f15",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_6",
+      "trace": "results\\differential\\random_seed_6\\input.trace",
+      "trace_sha256": "da4d5ef1c52e01c2569622bf0d2f7f5c5e779f3f6feee2d096dda532da0e1a45",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_7",
+      "trace": "results\\differential\\random_seed_7\\input.trace",
+      "trace_sha256": "462950cf6e2fbca6e41e6eade83610335d1efc908c17169f4d668b741148476d",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_8",
+      "trace": "results\\differential\\random_seed_8\\input.trace",
+      "trace_sha256": "527aedf504621d42cb85c787ada5697082aaf7cbcc39724cb030f8f2a9525911",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_9",
+      "trace": "results\\differential\\random_seed_9\\input.trace",
+      "trace_sha256": "aee3c15ffdbf57979ead50920a7514604a73513dfc58af42c86c951600fffd07",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_10",
+      "trace": "results\\differential\\random_seed_10\\input.trace",
+      "trace_sha256": "f19049cec06623ea6d73a34b6a50294c4db63bfd627683d1f027cfd15fd849f0",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_11",
+      "trace": "results\\differential\\random_seed_11\\input.trace",
+      "trace_sha256": "0da6ad8e88252c32b4f7c874a3ab0267f9358290dd5d2cd61d76c4820e63162f",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_12",
+      "trace": "results\\differential\\random_seed_12\\input.trace",
+      "trace_sha256": "edc61b39db1b8735321704caf3ad0e4dd2fc0846c90764319e946dba32906eda",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_13",
+      "trace": "results\\differential\\random_seed_13\\input.trace",
+      "trace_sha256": "7841c25b2b07911496e003b3910cdfdb3f61a01be3ebbb1b31cc5ef7ded4be70",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_14",
+      "trace": "results\\differential\\random_seed_14\\input.trace",
+      "trace_sha256": "c537228e9a1581b9b0f9adbece4e9d1dfc02fb2236b4ae80b372dfcbb611fac7",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_15",
+      "trace": "results\\differential\\random_seed_15\\input.trace",
+      "trace_sha256": "76bd27d42f7f417a00d0532461089e70dc6ddc5e7f9b76412fd7583d694428c5",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_16",
+      "trace": "results\\differential\\random_seed_16\\input.trace",
+      "trace_sha256": "31975bd812db648e3c0c3460df10661452d2a00184e290cc2580250aeaba5f25",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_17",
+      "trace": "results\\differential\\random_seed_17\\input.trace",
+      "trace_sha256": "40993b81ddac0de085ae8d137aef0657332cdb1fe2cf514ecea33aef26cbb43c",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_18",
+      "trace": "results\\differential\\random_seed_18\\input.trace",
+      "trace_sha256": "663c0025bb4dfb460846721cc511d939c86b0491714137b7f23770be9cc04f46",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_19",
+      "trace": "results\\differential\\random_seed_19\\input.trace",
+      "trace_sha256": "4987fde5f570b2798ee3309cc0a09217f89eedf0c150c9bd77c03e3ce4be4c6a",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    },
+    {
+      "name": "random_seed_20",
+      "trace": "results\\differential\\random_seed_20\\input.trace",
+      "trace_sha256": "c89db800bdc8995b1aa70cf311d60bd80bc0935c4bcd886e60a6bb9b745e9347",
+      "trace_lines": 4000,
+      "requested_operations": 2000,
+      "results": {
+        "oracle": {
+          "status": "REFERENCE",
+          "response_lines": 4000
+        },
+        "A": {
+          "status": "PASS",
+          "response_lines": 4000
+        },
+        "B": {
+          "status": "PASS",
+          "response_lines": 4000
+        }
+      }
+    }
+  ],
+  "passed": 74,
+  "failed": 2,
+  "summary": "Historical run: 38 cases, 76 comparisons, 74 passed, 2 failed (A duplicate IDs)."
+}
