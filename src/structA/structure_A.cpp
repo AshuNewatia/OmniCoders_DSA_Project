@@ -36,7 +36,13 @@ private:
         if (2 * index + 2 >= count) {
             int left = 2 * index + 1;
 
+ adversary
+            if (D5_COMPARE(
+                    Heap[left].priority_key < Heap[index].priority_key
+                )) {
+
             if (comes_before(Heap[left], Heap[index])) {
+ main
                 std::swap(Heap[left], Heap[index]);
 
                 table.interchange(
@@ -51,9 +57,22 @@ private:
         int left = 2 * index + 1;
         int right = 2 * index + 2;
 
+adversary
+        int smallest =
+            D5_COMPARE(
+                Heap[right].priority_key < Heap[left].priority_key
+            )
+                ? right
+                : left;
+
+        if (D5_COMPARE(
+                Heap[index].priority_key > Heap[smallest].priority_key
+            )) {
+
         int smallest = comes_before(Heap[right], Heap[left]) ? right : left;
 
         if (comes_before(Heap[smallest], Heap[index])) {
+ main
             std::swap(Heap[index], Heap[smallest]);
 
             table.interchange(
@@ -78,7 +97,13 @@ private:
 
         int parent = (index - 1) / 2;
 
+ adversary
+        if (D5_COMPARE(
+                Heap[parent].priority_key > Heap[index].priority_key
+            )) {
+
         if (comes_before(Heap[index], Heap[parent])) {
+ main
             std::swap(Heap[parent], Heap[index]);
 
             table.interchange(
@@ -191,4 +216,8 @@ public:
     }
 };
 
+ adversary
 #undef D5_COMPARE
+
+#undef D5_COMPARE
+ main
