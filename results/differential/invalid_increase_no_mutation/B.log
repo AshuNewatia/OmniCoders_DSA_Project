@@ -1,0 +1,7 @@
+OK BUILD
+ERROR invalid_argument
+STATE 2 | 1 7 0 -7 | 2 3 10 -3 | EMPTY
+ERROR out_of_range
+STATE 2 | 1 7 0 -7 | 2 3 10 -3 | EMPTY
+ERROR out_of_range
+STATE 2 | 1 7 0 -7 | 2 3 10 -3 | EMPTY

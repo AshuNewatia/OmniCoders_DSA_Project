@@ -1,6 +1,7 @@
 #include "OracleQueue.h"
 
 #include <stdexcept>
+#include <unordered_set>
 
 bool OracleQueue::comes_before(
     const Patient& left,
@@ -18,10 +19,23 @@ bool OracleQueue::comes_before(
 }
 
 void OracleQueue::build_heap(const std::vector<Patient>& patients) {
+    // Validate first so invalid input cannot replace the existing queue.
+    std::unordered_set<int> ids;
+    ids.reserve(patients.size());
+    for (const Patient& patient : patients) {
+        if (!ids.insert(patient.id).second) {
+            throw std::invalid_argument("build_heap contains duplicate patient IDs");
+        }
+    }
     patients_ = patients;
 }
 
 void OracleQueue::insert(const Patient& patient) {
+    for (const Patient& existing : patients_) {
+        if (existing.id == patient.id) {
+            throw std::invalid_argument("Patient ID is already live");
+        }
+    }
     patients_.push_back(patient);
 }
 

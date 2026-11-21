@@ -1,0 +1,6 @@
+{
+  "trace_line": 2,
+  "operation": "INSERT 1 50 99 -100",
+  "expected": "ERROR invalid_argument",
+  "actual": "OK INSERT"
+}

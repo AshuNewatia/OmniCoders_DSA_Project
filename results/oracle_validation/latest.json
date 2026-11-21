@@ -1,0 +1,39 @@
+{
+  "timestamp_utc": "2026-11-21T08:23:48.412045+00:00",
+  "status": "EXECUTION_ERROR",
+  "seed": null,
+  "steps_per_seed": 2000,
+  "scope": "Oracle only; not A/B differential or simulator aging tests.",
+  "source_sha256": {
+    "app/ITriageQueue.h": "bb2b833d2bbf23155f0f66f14ca5f58e4925f51ae28144583277c29d2457008f",
+    "oracle/OracleQueue.h": "e1037ccaac31c870aa7cf8b686dedfa09301053fa5e40bc0aad6b5764a418446",
+    "oracle/OracleQueue.cpp": "4d88ee56923b4a84870724695e835c30eee525981e7e75caf1d2eb4b90bb465e",
+    "oracle/validation_tests.cpp": "f25b151ff47285f7b81019833ca14bedfa76fdf229979ed8e1790e6abb60742c"
+  },
+  "commit": "3f0fed091646ba02200ffb1526386e5c12167b75",
+  "git_status": [
+    " D results/dashboard_latest.csv",
+    " M src/structB/StructureB.cpp",
+    "?? detail.md",
+    "?? results/differential/",
+    "?? results/oracle_validation/"
+  ],
+  "compile_command": [
+    "C:\\OmniCoders_DSA_Project\\tmp\\toolchains\\mingw64\\bin\\g++.exe",
+    "-std=c++17",
+    "-O2",
+    "-Wall",
+    "-Wextra",
+    "-pedantic",
+    "C:\\OmniCoders_DSA_Project\\oracle\\OracleQueue.cpp",
+    "C:\\OmniCoders_DSA_Project\\oracle\\validation_tests.cpp",
+    "-o",
+    "C:\\OmniCoders_DSA_Project\\tmp\\oracle_validation\\validation_tests.exe"
+  ],
+  "compiler_version": "g++.exe (MinGW-W64 x86_64-ucrt-posix-seh, built by Brecht Sanders, r3) 14.2.0",
+  "compile_exit_code": 0,
+  "run_command": [
+    "C:\\OmniCoders_DSA_Project\\tmp\\oracle_validation\\validation_tests.exe"
+  ],
+  "reason": "[WinError 4551] An Application Control policy has blocked this file"
+}

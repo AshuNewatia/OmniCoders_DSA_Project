@@ -4,7 +4,7 @@ CXXFLAGS := -std=c++17 -O2 -Wall -Wextra -pedantic
 APP := simulator
 ORACLE_TEST := oracle_tests
 
-.PHONY: all run_app test run_d5 run_all clean
+.PHONY: all run_app test test_differential run_d5 run_all clean
 
 all: $(APP) $(ORACLE_TEST)
 
@@ -21,6 +21,9 @@ run_app: $(APP)
 
 test: $(ORACLE_TEST)
 	./$(ORACLE_TEST)
+
+test_differential:
+	python oracle/run_differential.py
 
 run_d5:
 	python adversary/run_experiments.py
