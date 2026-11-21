@@ -1,0 +1,62 @@
+\documentclass[11pt,a4paper]{article}
+\usepackage[margin=21mm]{geometry}
+\usepackage{amsmath,amssymb,xcolor}
+\definecolor{navy}{RGB}{24,49,70}
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{5pt}
+\makeatletter
+\renewcommand\section{\@startsection{section}{1}{0pt}{10pt}{4pt}{\large\bfseries}}
+\makeatother
+\begin{document}
+{\color{navy}\LARGE\bfseries D4: Keeping the locator correct}\\[5pt]
+{\large Emergency Triage Queue --- Oracle Owner}
+
+\section*{What are we proving?}
+Structure A stores patients in a heap array $h$. The locator $pos$ tells us
+where each patient is stored. For every valid index $i$, we need:
+\[
+\boxed{pos[h[i].id]=i}
+\]
+This means: if a patient is at index $i$, looking up their ID must return $i$.
+We assume each live patient has a unique ID.
+
+\section*{1. After a swap}
+Suppose patient 42 is at index 2 and patient 90 is at index 6. When we swap
+them, we also set $pos[42]=6$ and $pos[90]=2$.
+Both mappings are now correct. Other patients did not move, so their mappings
+are still correct too. The same argument works for any two indices.
+
+\section*{2. After a sift}
+Sift-up and sift-down are just sequences of swaps. The locator is correct
+before the first swap, and each swap keeps it correct. Therefore, it remains
+correct after the whole sift. During build-heap, we first create the mappings
+for the input array, then use these same swaps.
+
+\section*{3. After deleting a patient}
+First, use the locator to find the patient. Swap that patient with the last
+record and update both mappings. Then remove the last record and erase its
+ID from the locator. If a replacement remains, sift it up or down as needed
+to restore heap order.
+
+The swap keeps the mappings correct, removal deletes only the target's
+mapping, and the sift preserves the remaining mappings. If the patient was
+already last, no sift is needed. In a linear-probing table, deletion leaves
+a tombstone so searches can still reach other IDs in the same probe chain.
+
+\section*{4. When is the indexed heap valid?}
+We need both heap order and a correct locator:
+\begin{itemize}
+\item \textbf{Heap order:} every parent comes before or ties with its children
+under the full comparison rule: priority key, then arrival time, then ID.
+\item \textbf{Locator consistency:} each patient has a unique ID mapped to
+its exact index, with no extra live mappings for absent patients.
+\end{itemize}
+These conditions are \textbf{necessary}: broken heap order makes the heap
+invalid, while a wrong locator can send an ID lookup to the wrong record.
+They are also \textbf{sufficient}: heap order makes the root a minimum
+because it comes before every descendant, and the locator finds every
+patient correctly. The array already provides the complete binary-tree shape.
+
+\textbf{Main idea:} Whenever a patient moves, update their locator entry.
+That is what keeps the heap and locator consistent.
+\end{document}
