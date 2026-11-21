@@ -237,14 +237,6 @@ void simulation(
 }
 
 int main() {
-    OracleQueue queue;
-
-    simulation(
-        &queue,
-        AgingPolicy::LINEAR,
-        12345,
-        "results/structure_a_linear.csv"
-    );
-
+    std::cout << "Run the simulator through the dashboard.\n";
     return 0;
 }
